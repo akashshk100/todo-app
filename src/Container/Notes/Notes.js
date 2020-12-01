@@ -10,143 +10,15 @@ class Notes extends Component {
         super(props)
         this.state = {
             tabValue: 0,
-            categorySelected: false,
-            notes: props.notes,
-            forwardedNotes: props.notes,
-            categorizedNotes: null
+            categorySelected: false
         }
-    }
-
-    static getDerivedStateFromProps(props,state){
-        state = {
-            notes: props.notes,
-            forwardedNotes: props.notes
-        }
-        return state
-    }
-
-    sortBySummary = (order) => {
-        let tempNotes = null
-        if(order){
-            tempNotes = this.state.forwardedNotes.sort( (a,b) => {
-                if (a.summary.toLowerCase() < b.summary.toLowerCase()){
-                    return -1 
-                }
-                if (a.summary.toLowerCase() > b.summary.toLowerCase()){
-                    return 1
-                }
-                return 0
-            })
-        }
-        else{
-            tempNotes = this.state.forwardedNotes.sort( (a,b) => {
-                if (a.summary.toLowerCase() < b.summary.toLowerCase()){
-                    return 1 
-                }
-                if (a.summary.toLowerCase() > b.summary.toLowerCase()){
-                    return -1
-                }
-                return 0
-            })
-        }
-        
-        this.setState({
-            forwardedNotes: tempNotes
-        })
-        // console.log(tempNotes)
-    }
-
-    sortByCreatedAt = (order) => {
-        let tempNotes = null
-        if(order){
-            tempNotes = this.state.forwardedNotes.sort( (a,b) => {
-                return a.createdAt - b.createdAt
-            })
-        }
-        else{
-            tempNotes = this.state.forwardedNotes.sort( (a,b) => {
-                return b.createdAt - a.createdAt
-            })
-        }
-        
-        this.setState({
-            forwardedNotes: tempNotes
-        })
-        // console.log(tempNotes)
-    }
-
-    sortByDueDate = (order) => {
-        let tempNotes = null
-        if(order){
-            tempNotes = this.state.forwardedNotes.sort( (a,b) => {
-                return a.dueDate - b.dueDate
-            })
-        }
-        else{
-            tempNotes = this.state.forwardedNotes.sort( (a,b) => {
-                return b.dueDate - a.dueDate
-            })
-        }
-        this.setState({
-            forwardedNotes: tempNotes
-        })
-        // console.log(tempNotes)
     }
     
     handleChange = (event, newValue) => {
-        if(this.state.tabValue !== newValue && newValue === 1){
-            let tempNotes = this.state.notes.filter( (note, inedx) => {
-                return note.currentState
-            } )
-            this.setState({
-                tabValue: newValue,
-                categorySelected: true,
-                categorizedNotes: tempNotes
-            })
-        } 
-        else if(this.state.tabValue !== newValue && newValue === 2){
-            
-            let tempNotes = this.state.notes.filter( (note, inedx) => {
-                return !note.currentState
-            } )
-            this.setState({
-                tabValue: newValue,
-                categorySelected: true,
-                categorizedNotes: tempNotes
-            })
-        }
-        else{
-            this.setState({
-                tabValue: newValue,
-                categorySelected: false
-            })
-        }
+        
     }
 
     render = () => {
-
-        let tableContent = (this.state.categorySelected) ? (
-            <NotesTable 
-                notes={this.state.categorizedNotes} 
-                removeNote={this.props.removeNote}
-                changeState={this.props.changeState}
-                editNote={this.props.editNote}
-                sortBySummary = {this.sortBySummary}
-                sortByCreatedAt = {this.sortByCreatedAt}
-                sortByDueDate = {this.sortByDueDate}   
-            />
-        ) : (
-            <NotesTable 
-                notes={this.state.forwardedNotes} 
-                removeNote={this.props.removeNote}
-                changeState={this.props.changeState}
-                editNote={this.props.editNote}
-                sortBySummary = {this.sortBySummary}
-                sortByCreatedAt = {this.sortByCreatedAt}
-                sortByDueDate = {this.sortByDueDate}   
-            />
-        )
-        
         return(
             <Aux>
                 <Tabs
@@ -161,7 +33,7 @@ class Notes extends Component {
                     <Tab label="Completed" style={{minWidth: "fit-content" }}/>
                 </Tabs>
                 <div style={ {marginTop: "10px"} }>
-                    {tableContent}
+                    <NotesTable />
                 </div>
             </Aux>
         )

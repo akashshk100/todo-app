@@ -13,6 +13,9 @@ import Button from '@material-ui/core/Button'
 import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import Aux from '../../HOC/Auxilliary/Auxilliary'
+import Axios from 'axios'
+import { connect } from 'react-redux'
+
 
 class AddNoteModal extends Component {
 
@@ -105,39 +108,60 @@ class AddNoteModal extends Component {
     }
 
     addNote = () => {
-        if(this.checkSummary() & this.checkDescription()){
-            if(this.props.id || this.props.id === 0){
-                this.props.addNote(this.props.id, this.state.summary, this.state.description, this.state.date, this.state.priority)
-            }
-            else{
-                this.props.addNote(this.state.summary, this.state.description, this.state.date, this.state.priority)
-            }
-            this.setState({
-                summary: "",
-                description: "",
-                date: new Date(),
-                priority: "none"
-            })
-            this.props.closeAddNoteModal()
-        }
+		Axios.post('/tasks', {
+			title: this.state.summary,
+			body: this.state.description,
+			completed: false,
+			createdAt: new Date().toLocaleDateString(),
+			dueDate: this.state.date.toLocaleDateString(),
+			priority: this.state.priority
+		}).then( res => {
+            this.props.addTasks([res.data])
+            this.props.handleClose()
+		} ).catch( err => {
+			console.log(err)
+		})
     }
+    
+    editNote = () => {
+		Axios.patch('/tasks/'+this.props.id, {
+			title: this.state.summary,
+			body: this.state.description,
+			completed: false,
+			createdAt: new Date().toLocaleDateString(),
+			dueDate: this.state.date.toLocaleDateString(),
+			priority: this.state.priority
+		}).then( res => {
+            this.props.updateTask(res.data)
+            this.props.handleClose()
+		} ).catch( err => {
+			console.log(err)
+		})
+	}
 
     render () {
 
         let dialogActionContent = (this.props.disabled) ? (
             <Aux>
-                <Button variant="contained" onClick={this.props.closeAddNoteModal} color="primary">
+                <Button variant="contained" onClick={this.props.handleClose} color="primary">
                     Close
                 </Button>
             </Aux>
         ) : (
             <Aux>
-                <Button variant="contained" onClick={this.props.closeAddNoteModal} color="primary">
+                <Button variant="contained" onClick={this.props.handleClose} color="primary">
                     Cancel
                 </Button>
-                <Button variant="contained" onClick={this.addNote} color="primary">
-                    Save
-                </Button>
+                { (this.props.id) ? (
+                    <Button variant="contained" onClick={this.editNote} color="primary">
+                        Update
+                    </Button>
+                ) : (
+                    <Button variant="contained" onClick={this.addNote} color="primary">
+                        Save
+                    </Button>
+                ) }
+                
             </Aux>
         )
 
@@ -223,4 +247,11 @@ class AddNoteModal extends Component {
     }
 }
 
-export default AddNoteModal
+const mapDispatchToProps = (dispatch) => {
+	return {
+        addTasks : (tasks) =>  dispatch({ type: 'ADDTASKS', tasks: tasks }),
+        updateTask: (task) => dispatch({ type: 'UPDATETASK', task: task })
+	}
+}
+
+export default connect(null, mapDispatchToProps)(AddNoteModal)
