@@ -4,13 +4,22 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import reducer from './store/reducer'
+import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
+import Axios from 'axios'
+
+Axios.interceptors.request.use( config => {
+  config.headers = {
+    'Authorization': 'Bearer '+localStorage.getItem('authToken') 
+  }
+  return config
+} )
 
 const store = createStore(reducer)
 
 ReactDOM.render(
-  <Provider store={store}> <App /> </Provider>,
+  <Provider store={store}><BrowserRouter> <App /> </BrowserRouter></Provider>,
   document.getElementById('root')
 );
 

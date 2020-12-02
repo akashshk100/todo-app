@@ -1,4 +1,4 @@
-import React, {useEffect ,useState} from 'react'
+import React from 'react'
 import Aux from '../../HOC/Auxilliary/Auxilliary'
 import Grid from '@material-ui/core/Grid'
 import Select from '@material-ui/core/Select'
@@ -9,23 +9,6 @@ import TextField from '@material-ui/core/TextField'
 
 const SearchControls = (props) => {
 
-    let [sortBy, setSortBy] = useState("none")
-    let [keyword, setKeyword] = useState("")
-
-    useEffect( () => {
-        setSortBy(props.sortedBy)
-    }, [props.sortedBy])
-
-    const handleKeyword = (event) => {
-        props.handleSearch(event.target.value)
-        setKeyword(event.target.value)
-    }
-
-    const handleSortby = (event) => {
-        setSortBy(event.target.value)
-        props.handleSortby(event.target.value)
-    }
-
     return(
         <Aux>
             <Grid container>
@@ -35,8 +18,7 @@ const SearchControls = (props) => {
                             <Select
                                 labelId="select-priority"
                                 label="Priority"
-                                value={sortBy}
-                                onChange={ handleSortby }
+                                value='none'
                             >
                                 <MenuItem value="none">
                                     <em>None</em>
@@ -49,9 +31,7 @@ const SearchControls = (props) => {
                 </Grid>
                 <Grid item sm={9}>
                     <TextField
-                        size="small"
-                        value={keyword}
-                        onChange={handleKeyword}               
+                        size="small"             
                         label="Search in All Task"
                         variant="outlined"
                         fullWidth

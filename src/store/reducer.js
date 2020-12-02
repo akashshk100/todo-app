@@ -1,6 +1,7 @@
 
 const initialState = {
-    tasks: []
+    tasks: [],
+    authState: false
 }
 
 const reducer = ( state=initialState, action ) => {
@@ -10,6 +11,7 @@ const reducer = ( state=initialState, action ) => {
             tempTasks.push(task)
         });
         return {
+            ...state,
             tasks : tempTasks
         }
     }
@@ -21,6 +23,7 @@ const reducer = ( state=initialState, action ) => {
             }
         } )
         return {
+            ...state,
             tasks : tempTasks
         }
     }
@@ -34,7 +37,20 @@ const reducer = ( state=initialState, action ) => {
         } )
         tempTasks.splice(delIndex, 1)
         return {
+            ...state,
             tasks : tempTasks
+        }
+    }
+    if(action.type === 'UPDATEAUTH'){
+        return {
+            ...state,
+            authState: action.value
+        }
+    }
+    if(action.type === 'CLEARSTATE'){
+        return {
+            ...state,
+            tasks: []
         }
     }
 
